@@ -1,0 +1,119 @@
+-- CreateTable
+CREATE TABLE `User` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `firstName` VARCHAR(50) NOT NULL,
+    `middleName` VARCHAR(50) NULL,
+    `lastName` VARCHAR(50) NOT NULL,
+    `mobile` VARCHAR(15) NOT NULL,
+    `email` VARCHAR(50) NOT NULL,
+    `passwordHash` VARCHAR(32) NOT NULL,
+    `registeredAt` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `lastLogin` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    UNIQUE INDEX `User_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Post` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `authorId` INTEGER UNSIGNED NOT NULL,
+    `parentId` INTEGER UNSIGNED NOT NULL,
+    `title` VARCHAR(75) NOT NULL,
+    `metaTitle` VARCHAR(100) NOT NULL,
+    `slug` VARCHAR(100) NOT NULL,
+    `summary` TINYTEXT NOT NULL,
+    `published` TINYINT NOT NULL,
+    `createdAt` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updatedAt` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `publishedAt` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `content` TEXT NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Post_meta` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `postId` INTEGER UNSIGNED NOT NULL,
+    `key` VARCHAR(50) NOT NULL,
+    `content` TEXT NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Post_comment` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `postId` INTEGER UNSIGNED NOT NULL,
+    `parentId` INTEGER UNSIGNED NOT NULL,
+    `title` VARCHAR(100) NOT NULL,
+    `published` TINYTEXT NOT NULL,
+    `createdAt` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `publishedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `content` TEXT NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Tag` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `title` VARCHAR(75) NOT NULL,
+    `metaTitle` VARCHAR(100) NOT NULL,
+    `slug` VARCHAR(100) NOT NULL,
+    `content` TEXT NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Post_tag` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `postId` INTEGER UNSIGNED NOT NULL,
+    `tagId` INTEGER UNSIGNED NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Category` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `parentId` INTEGER UNSIGNED NOT NULL,
+    `title` VARCHAR(75) NOT NULL,
+    `metaTitle` VARCHAR(100) NOT NULL,
+    `slug` VARCHAR(100) NOT NULL,
+    `content` TEXT NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Post_category` (
+    `id` INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+    `postId` INTEGER UNSIGNED NOT NULL,
+    `categoryId` INTEGER UNSIGNED NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- AddForeignKey
+ALTER TABLE `Post` ADD CONSTRAINT `Post_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `User`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_meta` ADD CONSTRAINT `Post_meta_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_comment` ADD CONSTRAINT `Post_comment_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_tag` ADD CONSTRAINT `Post_tag_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_tag` ADD CONSTRAINT `Post_tag_tagId_fkey` FOREIGN KEY (`tagId`) REFERENCES `Tag`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_category` ADD CONSTRAINT `Post_category_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Post`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Post_category` ADD CONSTRAINT `Post_category_categoryId_fkey` FOREIGN KEY (`categoryId`) REFERENCES `Category`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
